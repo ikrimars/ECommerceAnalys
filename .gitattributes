@@ -1,0 +1,9 @@
+order_payments_dataset.csv filter=lfs diff=lfs merge=lfs -text
+sellers_dataset.csv filter=lfs diff=lfs merge=lfs -text
+customers_dataset.csv filter=lfs diff=lfs merge=lfs -text
+order_items_dataset.csv filter=lfs diff=lfs merge=lfs -text
+orders_dataset.csv filter=lfs diff=lfs merge=lfs -text
+product_category_name_translation.csv filter=lfs diff=lfs merge=lfs -text
+products_dataset.csv filter=lfs diff=lfs merge=lfs -text
+geolocation_dataset.csv filter=lfs diff=lfs merge=lfs -text
+order_reviews_dataset.csv filter=lfs diff=lfs merge=lfs -text
