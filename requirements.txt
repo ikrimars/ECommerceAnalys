@@ -1,6 +1,5 @@
-matplotlib @ file:///C:/b/abs_49b2acwxd4/croot/matplotlib-suite_1679593486357/work
-matplotlib-inline @ file:///C:/ci_311/matplotlib-inline_1676425798036/work
-pandas @ file:///C:/ci_311_rebuilds/pandas_1679004481142/work
+matplotlib==3.6.2
+pandas==1.5.3
 streamlit==1.28.2
-numpy @ file:///C:/Users/dev-admin/mkl/numpy_and_numpy_base_1682982345978/work
+numpy==1.23.2
 Pillow==9.4.0
