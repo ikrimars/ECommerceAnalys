@@ -131,26 +131,12 @@ plt.yticks(fontsize=10)
 # Streamlit app
 st.title("E-commerce Dashboard")
 
-# Display the orders DataFrame
-st.subheader("Orders Dataset")
-st.write(order_df.head())
 
 # Display the delivery time analysis
 st.subheader("Delivery Time Analysis")
 st.write(f"Average delivery time: {rata_pengiriman:.2f} days")
 st.write(f"Minimum delivery time: {min_value} days")
 st.write(f"Maximum delivery time: {max_value} days")
-
-st.header("Jumlah Skor Ulasan ")
-# Display the orders DataFrame
-st.subheader("Order Review Dataset")
-st.write(order_review_df.head())
-st.subheader("Review Score")
-review= order_review_df.groupby(by='review_score').agg({
- "review_score":["count"]
-})
-st.write(review)
-st.markdown('Pada review score terdapat 57328 dengan score 5 dan paling sedikit dengan score 2 sebanyak 3151 review')
 
 st.header("Total Revenue per Month and Year")
 # Create tabs
@@ -195,8 +181,6 @@ item_category_df = pd.merge(
     left_on="product_id",
     right_on="product_id"
 )
-
-st.write(item_category_df.head())
 
 st.header("Analisa Kategori Produk")
 #kolom data kaegori
@@ -261,6 +245,68 @@ with col3:
     st.pyplot(fig)
     st.markdown("produk dengan ongkos kirim tertinggi yaitu utilidades bebes sebesar 409.68 USD")
 
+
+st.header("Jumlah Skor Ulasan ")
+# Display the orders DataFrame
+st.subheader("Analisa Review")
+col_review1, col_review2= st.columns(2)
+
+with col_review1:
+    st.subheader("Review Score")
+    review= order_review_df.groupby(by='review_score').agg({
+     "review_score":["count"]
+    })
+    st.write(review)
+with col_review2:
+    #menyatukan product dengan review
+
+    review_item_df = pd.merge(
+        left=item_category_df,
+        right=order_review_df,
+        how="left",
+        left_on="order_id",
+        right_on="order_id"
+    )
+    agg_review_item_df= review_item_df.groupby(['review_score','product_category_name']).agg({
+      "review_score":["sum"]
+    })
+    agg_review_item_df.columns = ['count review score']
+    # Reset indeks untuk membuat 'review_score' dan 'product_category_name' menjadi kolom
+    agg_review_item_df.reset_index(inplace=True)
+    st.write(agg_review_item_df)
+
+st.subheader("Grafik Maks and Min Review Score")
+# Tentukan nilai maksimum dan minimum dari review_score
+max_score = 5
+min_score = 1
+
+# Create the bar chart using Streamlit
+fig, ax = plt.subplots(figsize=(20, 12))
+
+# Plot for maximum review score
+max_score_data = agg_review_item_df[agg_review_item_df['review_score'] == max_score]
+ax.bar(max_score_data['product_category_name'], max_score_data['count review score'], color='blue', label=f'Review Score {max_score}')
+
+# Plot for minimum review score
+min_score_data = agg_review_item_df[agg_review_item_df['review_score'] == min_score]
+ax.bar(min_score_data['product_category_name'], min_score_data['count review score'], color='red', label=f'Review Score {min_score}')
+
+# Set labels and title
+ax.set_xlabel('Product Category')
+ax.set_ylabel('Count Review Score')
+ax.set_title('Maksimum dan Minimum Review Score Berdasarkan Product Category')
+
+# Add legend
+ax.legend()
+
+# Rotate X-axis labels
+plt.xticks(rotation=90, ha='right')
+
+# Display the chart using Streamlit
+st.pyplot(fig)
+st.markdown("review score dengan score 5 terdapat 57328 review dan paling sedikit dengan score 2 sebanyak 3151 review dengan review score 5 tertinggi yaitu cama_mesa_banho sebanyak 33140 review dan review score 1 sebanyak 1904 review.")
+
+
 # Membuat gambar dengan ukuran lebih kecil
 st.header("Distribusi tipe pembayaran untuk order")
 fig, ax = plt.subplots(figsize=(8, 4))
@@ -289,9 +335,6 @@ with st.container():
 st.markdown('Metode pembayaran dengan menggunakan credi card banyak diminati customers untuk melakukan order dan paling sedikit menggunakan debit card.')
 
 st.header("Lokasi Geografis Persebaran Pelanggan")
-# Display the orders DataFrame
-st.subheader("Geolocation Dataset")
-st.write(geolocation_df.head())
 # Tentukan warna berdasarkan nilai longitude dan latitude
 colors = geolocation_df['geolocation_lng']
 
@@ -300,8 +343,7 @@ plt.xlabel('Longitude')
 plt.ylabel('Latitude')
 plt.title('Lokasi Geografis Pelanggan')
 st.pyplot(plt)
-st.markdown('Berdasarkan data diatas, Setiap titik akan memiliki koordinat longitude di sumbu x dan latitude di sumbu y. gambaran visual tentang sebaran lokasi pelanggan di berbagai daerah. hasilnya berkumpul pada satu titik lokasi geografis dengan rata-rata latitude -20.998353 dan longitude -46.461098. Semakin gelap warnanya, semakin rendah nilai longitude. Hal ini memungkinkan kita untuk melihat bagaimana pelanggan terdistribusi secara horizontal (sepanjang garis bujur)')
-st.header("Dataset Informasi Kondisi Demografi")
+st.markdown('Berdasarkan data diatas, Setiap titik akan memiliki koordinat longitude di sumbu x dan latitude di sumbu y. gambaran visual tentang sebaran lokasi pelanggan di berbagai daerah. hasilnya berkumpul pada satu titik lokasi geografis dengan rata-rata latitude -20.998353 dan longitude -46.461098. Semakin gelap warnanya, semakin rendah nilai longitude')
 order_customers_df = pd.merge(
     left=order_df,
     right=customers_df,
@@ -309,7 +351,6 @@ order_customers_df = pd.merge(
     left_on="customer_id",
     right_on="customer_id"
 )
-st.write(order_customers_df.head())
 st.subheader("informasi Demografi Pelanggan")
 colom1, colom2 = st.columns(2)
 with colom1:
